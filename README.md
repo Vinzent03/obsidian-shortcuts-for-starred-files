@@ -3,8 +3,10 @@
 Plugin for [Obsidian](https://obsidian.md)
 
 ## How to use
-There are 9 commands to open the first 9 starred files. For example could you set the hotkeys to `Ctrl + <1-9>`.
-**Important:** You have to star files with the core plugin.
+There are 9 commands to open the first 9 starred files. **For example** could you set the hotkeys to `Ctrl + <1-9>`. You can set your own hotkeys for the commands under `Hotkeys` in Obsidian. Just search for `Shortcuts for starred files`.
+
+**Important:** You have to star files with the core plugin. Search for it in the help vault if you don't know the core plugin.
+
 
 ## Compatibility
 Custom plugins are only available for Obsidian v0.9.7+.
