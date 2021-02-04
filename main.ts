@@ -36,10 +36,11 @@ export default class MyPlugin extends Plugin {
 			if (items[index].type == "file") {
 				this.app.workspace.openLinkText(items[index].path, "");
 			} else if (items[index].type == "search") {
-				new Notice(`At index ${index + 1} is a search starred, not a file`);
+				const searchPlugin = this.app.internalPlugins.plugins["global-search"];
+				searchPlugin.instance.openGlobalSearch(items[index].query);
 			}
 		} else {
-			new Notice(`There is no starred file at index ${index + 1}`);
+			new Notice(`There is nothing starred at index ${index + 1}`);
 		}
 	}
 	onunload() {
