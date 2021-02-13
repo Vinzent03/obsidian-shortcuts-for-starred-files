@@ -12,11 +12,18 @@ export default class MyPlugin extends Plugin {
 			this.addCommand({
 				id: `open-file-${i}`,
 				name: `Open starred file: ${i}`,
-				callback: (() => this.open(i - 1)),
+				callback: (() => this.open(i - 1, false)),
+			});
+		}
+		for (let i = 1; i <= 9; i++) {
+			this.addCommand({
+				id: `open-file-in-new-pane-${i}`,
+				name: `Open starred file in a new pane: ${i}`,
+				callback: (() => this.open(i - 1, true)),
 			});
 		}
 	}
-	async open(index: number) {
+	async open(index: number, inNewPane: boolean) {
 		const rawItems = this.app.internalPlugins.plugins.starred.instance.items as Item[];
 		let items: Item[] = [];
 
@@ -34,7 +41,7 @@ export default class MyPlugin extends Plugin {
 
 		if (items[index]) {
 			if (items[index].type == "file") {
-				this.app.workspace.openLinkText(items[index].path, "");
+				this.app.workspace.openLinkText(items[index].path, "", inNewPane);
 			} else if (items[index].type == "search") {
 				const searchPlugin = this.app.internalPlugins.plugins["global-search"];
 				searchPlugin.instance.openGlobalSearch(items[index].query);
