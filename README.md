@@ -30,3 +30,12 @@ Custom plugins are only available for Obsidian v0.9.7+.
 3. Reload Obsidian (Str + r)
 4. Go to settings and disable safe mode
 5. Enable `Shortcuts for starred files`
+
+---
+
+
+> If you want to support me ([Vinzent03](https://github.com/Vinzent03)) you can consider [buying me a coffee](https://www.buymeacoffee.com/Vinzent03).
+
+<br>
+
+<a href="https://www.buymeacoffee.com/Vinzent03"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=Vinzent03&button_colour=5F7FFF&font_colour=ffffff&font_family=Inter&outline_colour=000000&coffee_colour=FFDD00"></a>
