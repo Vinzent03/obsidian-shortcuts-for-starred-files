@@ -1,7 +1,7 @@
 {
   "id": "obsidian-shortcuts-for-starred-files",
   "name": "Hotkeys for Bookmarks",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Set an individual hotkey for the first 9 bookmarks and open them just with your keyboard.",
   "author": "Vinzent",
   "authorUrl": "https://github.com/Vinzent03",
