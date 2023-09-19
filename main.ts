@@ -1,4 +1,11 @@
-import { FileView, Notice, Plugin, PluginSettingTab, Setting } from "obsidian";
+import {
+    FileView,
+    Notice,
+    Plugin,
+    PluginSettingTab,
+    Setting,
+    WorkspaceLeaf,
+} from "obsidian";
 interface Item {
     type: "file" | "search";
     title: string;
@@ -8,11 +15,13 @@ interface Item {
 const DEFAULT_SETTINGS: HotkeysForBookmarksSettings = {
     changeStandardNoteMode: false,
     openInPreview: false,
+    preferOpenTab: false,
 };
 
 interface HotkeysForBookmarksSettings {
     changeStandardNoteMode: boolean;
     openInPreview: boolean;
+    preferOpenTab: boolean;
 }
 
 export default class HotkeysForBookmarks extends Plugin {
@@ -56,6 +65,18 @@ export default class HotkeysForBookmarks extends Plugin {
         }
 
         if (items[index]) {
+            if (items[index].type == "file" && this.settings.preferOpenTab) {
+                let foundLeaf: WorkspaceLeaf | null = null;
+                this.app.workspace.iterateAllLeaves((leaf) => {
+                    if ((leaf.view as any).file?.path == items[index].path) {
+                        foundLeaf = leaf;
+                    }
+                });
+                if (foundLeaf) {
+                    this.app.workspace.setActiveLeaf(foundLeaf);
+                }
+            }
+
             await bookmarksPlugin.openBookmark(items[index], inNewPane);
             const view = this.app.workspace.getActiveViewOfType(FileView);
             if (view) {
@@ -122,6 +143,18 @@ class SettingsTab extends PluginSettingTab {
                         this.plugin.saveSettings();
                     })
                     .setValue(this.plugin.settings.openInPreview)
+            );
+        new Setting(containerEl)
+            .setName(
+                "Open bookmark in the tab it is already opened in (if possible)"
+            )
+            .addToggle((cb) =>
+                cb
+                    .onChange((value) => {
+                        this.plugin.settings.preferOpenTab = value;
+                        this.plugin.saveSettings();
+                    })
+                    .setValue(this.plugin.settings.preferOpenTab)
             );
     }
 }
