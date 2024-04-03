@@ -7,8 +7,9 @@ import {
     WorkspaceLeaf,
 } from "obsidian";
 interface Item {
-    type: "file" | "search";
+    type: "file" | "search" | "group";
     title: string;
+    items?: Item[];
     path?: string;
     query?: string;
 }
@@ -45,24 +46,31 @@ export default class HotkeysForBookmarks extends Plugin {
             });
         }
     }
+    async flattenBookmarks(items: Item[]): Promise<Item[]> {
+        let result: Item[] = [];
+        for (let item of items) {
+            if (result.length == 9) {
+                break;
+            }
+            if (item.type == "file") {
+                const exists = await this.app.vault.adapter.exists(item.path);
+                if (exists) result.push(item);
+            } else if (item.type == "group") {
+                result = result.concat(await this.flattenBookmarks(item.items));
+            } else {
+                result.push(item);
+            }
+        }
+        return result;
+    }
+
     async open(index: number, inNewPane: boolean) {
         const bookmarksPlugin = (
             this.app as any
         ).internalPlugins.getEnabledPluginById("bookmarks");
         const rawItems = bookmarksPlugin.items;
-        let items: Item[] = [];
-
-        for (let item of rawItems) {
-            if (items.length == 9) {
-                break;
-            }
-            if (item.type == "file") {
-                const exists = await this.app.vault.adapter.exists(item.path);
-                if (exists) items.push(item);
-            } else {
-                items.push(item);
-            }
-        }
+        let items: Item[] = await this.flattenBookmarks(rawItems);
+        console.log(items);
 
         if (items[index]) {
             if (items[index].type == "file" && this.settings.preferOpenTab) {
@@ -128,13 +136,13 @@ class SettingsTab extends PluginSettingTab {
                         this.plugin.settings.changeStandardNoteMode = value;
                         this.plugin.saveSettings();
                     })
-                    .setValue(this.plugin.settings.changeStandardNoteMode)
+                    .setValue(this.plugin.settings.changeStandardNoteMode),
             );
 
         new Setting(containerEl)
             .setName("Open in Reading mode")
             .setDesc(
-                "This setting only takes affect, if the above setting is turned on"
+                "This setting only takes affect, if the above setting is turned on",
             )
             .addToggle((cb) =>
                 cb
@@ -142,11 +150,11 @@ class SettingsTab extends PluginSettingTab {
                         this.plugin.settings.openInPreview = value;
                         this.plugin.saveSettings();
                     })
-                    .setValue(this.plugin.settings.openInPreview)
+                    .setValue(this.plugin.settings.openInPreview),
             );
         new Setting(containerEl)
             .setName(
-                "Open bookmark in the tab it is already opened in (if possible)"
+                "Open bookmark in the tab it is already opened in (if possible)",
             )
             .addToggle((cb) =>
                 cb
@@ -154,7 +162,7 @@ class SettingsTab extends PluginSettingTab {
                         this.plugin.settings.preferOpenTab = value;
                         this.plugin.saveSettings();
                     })
-                    .setValue(this.plugin.settings.preferOpenTab)
+                    .setValue(this.plugin.settings.preferOpenTab),
             );
     }
 }
